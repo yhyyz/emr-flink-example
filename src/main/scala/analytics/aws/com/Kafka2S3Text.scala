@@ -23,7 +23,7 @@ object Kafka2S3Text {
 
   // kafka 中样例数据如下：
   // {"uuid":"999d0f4f-9d49-4ad0-9826-7a01600ed0b8","date":"2021-04-13T06:23:10.593Z","timestamp":1617171790593,"ad_type":1203,"ad_type_name":"udxyt"}
-  def createKafkaSource(env: StreamExecutionEnvironment,parmas:Config):DataStream[String]={
+  def createKafkaSource(env: StreamExecutionEnvironment, parmas: Config): DataStream[String] = {
     val properties = new Properties()
     properties.setProperty("bootstrap.servers", parmas.brokerList)
     properties.setProperty("group.id", parmas.groupId)
@@ -31,18 +31,19 @@ object Kafka2S3Text {
     env.addSource(myConsumer)
   }
 
-
-  def createFileSink(params:Config) = {
+  def createFileSink(params: Config) = {
     val sink = StreamingFileSink
       .forRowFormat(new Path(params.output), new SimpleStringEncoder[String]("UTF-8"))
       .withRollingPolicy(
         DefaultRollingPolicy.builder()
           // 文件滚动策略，滚动时间，文件不活跃时间，文件大小，三个条件控制，任何一个达到就触发滚动
-          .withRolloverInterval(TimeUnit.MINUTES.toMillis(Integer.parseInt(params.rolloverInterval)))
-          .withInactivityInterval(TimeUnit.MINUTES.toMillis(Integer.parseInt(params.inactivityInterval)))
+          .withRolloverInterval(TimeUnit.
+            MINUTES.toMillis(Integer.parseInt(params.rolloverInterval)))
+          .withInactivityInterval(TimeUnit.
+            MINUTES.toMillis(Integer.parseInt(params.inactivityInterval)))
           .withMaxPartSize(Integer.parseInt(params.maxPartSize))
           .build())
-          .withBucketAssigner(new CustomBucketAssigner)
+      .withBucketAssigner(new CustomBucketAssigner)
       .build()
     sink
   }
@@ -59,15 +60,15 @@ object Kafka2S3Text {
   def main(args: Array[String]) {
     val parmas = Config.parseConfig(Kafka2S3Text, args)
     val env = StreamExecutionEnvironment.getExecutionEnvironment
-    env.enableCheckpointing(parmas.checkpointInterval.toInt*1000)
+    env.enableCheckpointing(parmas.checkpointInterval.toInt * 1000)
     env.getCheckpointConfig.setCheckpointingMode(CheckpointingMode.EXACTLY_ONCE)
     env.getCheckpointConfig.setMinPauseBetweenCheckpoints(500)
     env.getCheckpointConfig.setCheckpointTimeout(60000)
     env.getCheckpointConfig.enableExternalizedCheckpoints(ExternalizedCheckpointCleanup.RETAIN_ON_CANCELLATION)
-    val  rocksBackend:StateBackend =new RocksDBStateBackend(parmas.checkpointDir)
+    val rocksBackend: StateBackend = new RocksDBStateBackend(parmas.checkpointDir)
     env.setStateBackend(rocksBackend)
     // create kafka source
-    val source = createKafkaSource(env,parmas)
+    val source = createKafkaSource(env, parmas)
     // kafka text data sink to s3
     source.addSink(createFileSink(parmas))
     env.execute("text stream to s3")

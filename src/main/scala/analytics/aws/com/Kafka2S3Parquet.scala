@@ -18,22 +18,22 @@ import java.util.Properties
 
 object Kafka2S3Parquet {
 
-  case class Data(uuid: String, date: String,timestamp:Long,ad_type:Int,ad_type_name:String)
+  case class Data(uuid: String, date: String, timestamp: Long, ad_type: Int, ad_type_name: String)
 
   // 自定义Bucket，按照原始日志的date字段值分区, kafka 中原始日志样例
   // {"uuid":"999d0f4f-9d49-4ad0-9826-7a01600ed0b8","date":"2021-04-13T06:23:10.593Z","timestamp":1617171790593,"ad_type":1203,"ad_type_name":"udxyt"}
   class CustomBucketAssigner extends BasePathBucketAssigner[Data] {
     override def getBucketId(element: Data, context: BucketAssigner.Context): String = s"logday=${
-      val tmp=element.date.split("T")
-      if (tmp.nonEmpty){
-        tmp(0).replaceAll("-","")
-      }else{
+      val tmp = element.date.split("T")
+      if (tmp.nonEmpty) {
+        tmp(0).replaceAll("-", "")
+      } else {
         "error"
       }
     }"
   }
 
-  def createKafkaSource(env: StreamExecutionEnvironment,params:Config):DataStream[String]={
+  def createKafkaSource(env: StreamExecutionEnvironment, params: Config): DataStream[String] = {
     val properties = new Properties()
     properties.setProperty("bootstrap.servers", params.brokerList)
     properties.setProperty("group.id", params.groupId)
@@ -41,7 +41,7 @@ object Kafka2S3Parquet {
     env.addSource(myConsumer)
   }
 
-  def createParquetSink(params:Config): StreamingFileSink[Data] = {
+  def createParquetSink(params: Config): StreamingFileSink[Data] = {
     val sink = StreamingFileSink
       // bulk format 只支持checkpoint的滚动策略，每次checkpoint滚动文件
       .forBulkFormat(
@@ -56,18 +56,18 @@ object Kafka2S3Parquet {
   def main(args: Array[String]) {
     val parmas = Config.parseConfig(Kafka2S3Parquet, args)
     val env = StreamExecutionEnvironment.getExecutionEnvironment
-    env.enableCheckpointing(parmas.checkpointInterval.toInt*1000)
+    env.enableCheckpointing(parmas.checkpointInterval.toInt * 1000)
     env.getCheckpointConfig.setCheckpointingMode(CheckpointingMode.EXACTLY_ONCE)
     env.getCheckpointConfig.setMinPauseBetweenCheckpoints(500)
     env.getCheckpointConfig.setCheckpointTimeout(60000)
     env.getCheckpointConfig.enableExternalizedCheckpoints(ExternalizedCheckpointCleanup.RETAIN_ON_CANCELLATION)
-    val  rocksBackend:StateBackend =new RocksDBStateBackend(parmas.checkpointDir)
+    val rocksBackend: StateBackend = new RocksDBStateBackend(parmas.checkpointDir)
     env.setStateBackend(rocksBackend)
     // create kafka source
-    val source = createKafkaSource(env,parmas)
+    val source = createKafkaSource(env, parmas)
     // kafka text data sink to s3
-    source.map(line=>{
-      val event:Data=JSON.parseObject(line,classOf[Data])
+    source.map(line => {
+      val event: Data = JSON.parseObject(line, classOf[Data])
       event
     }).addSink(createParquetSink(parmas))
     env.execute("stream parquet to s3")

@@ -1,7 +1,9 @@
+### 更详细的程序及使用说明，会随代码发给客户
 ### 程序包含三个实现
 1. Kafka2S3Text
 2. kafka2S3Parquet
 3. Kafka2S3Hive
+
 
 ### Kafka 中数据样例
 Kafka中是JSON数据，样例数据如下，测试时可以用以下样例格式发送数据到Kafka
