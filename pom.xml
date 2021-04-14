@@ -69,12 +69,6 @@
             <artifactId>flink-connector-kafka_${scala.binary.version}</artifactId>
             <version>${flink.version}</version>
         </dependency>
-        <!--		<dependency>-->
-        <!--			<groupId>org.apache.flink</groupId>-->
-        <!--			<artifactId>flink-s3-fs-presto</artifactId>-->
-        <!--			<version>1.11.2</version>-->
-        <!--		</dependency>-->
-
 
         <dependency>
             <groupId>org.apache.flink</groupId>
@@ -144,7 +138,7 @@
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-connector-hive_${scala.binary.version}</artifactId>
             <version>${flink.version}</version>
-            <!--<scope>${scope.type}</scope>-->
+            <scope>${scope.type}</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.flink</groupId>
@@ -166,7 +160,7 @@
                     <artifactId>commons-compiler</artifactId>
                 </exclusion>
             </exclusions>
-            <!--<scope>${scope.type}</scope>-->
+            <scope>${scope.type}</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.hadoop</groupId>
