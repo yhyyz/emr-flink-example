@@ -1,4 +1,4 @@
-package analytics.aws.com.conf
+package com.aws.analytics.conf
 
 case class Config(
                    brokerList: String = "",

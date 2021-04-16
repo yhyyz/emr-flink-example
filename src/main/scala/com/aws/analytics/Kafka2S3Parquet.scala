@@ -1,8 +1,8 @@
-package analytics.aws.com
+package com.aws.analytics
 
-import analytics.aws.com.conf.Config
 import com.alibaba.fastjson.JSON
-import org.apache.flink.api.common.serialization.{SimpleStringSchema}
+import com.aws.analytics.conf.Config
+import org.apache.flink.api.common.serialization.SimpleStringSchema
 import org.apache.flink.api.scala.createTypeInformation
 import org.apache.flink.contrib.streaming.state.RocksDBStateBackend
 import org.apache.flink.core.fs.Path
@@ -14,6 +14,7 @@ import org.apache.flink.streaming.api.functions.sink.filesystem.bucketassigners.
 import org.apache.flink.streaming.api.functions.sink.filesystem.{BucketAssigner, StreamingFileSink}
 import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironment}
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer
+
 import java.util.Properties
 
 object Kafka2S3Parquet {
