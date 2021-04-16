@@ -1,6 +1,6 @@
-package analytics.aws.com
+package com.aws.analytics
 
-import analytics.aws.com.conf.Config
+import com.aws.analytics.conf.Config
 import org.apache.flink.contrib.streaming.state.RocksDBStateBackend
 import org.apache.flink.runtime.state.StateBackend
 import org.apache.flink.streaming.api.CheckpointingMode

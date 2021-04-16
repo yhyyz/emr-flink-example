@@ -1,6 +1,6 @@
-package analytics.aws.com
+package com.aws.analytics
 
-import analytics.aws.com.conf.Config
+import com.aws.analytics.conf.Config
 import org.apache.flink.api.common.serialization.{SimpleStringEncoder, SimpleStringSchema}
 import org.apache.flink.api.scala.createTypeInformation
 import org.apache.flink.contrib.streaming.state.RocksDBStateBackend
@@ -13,6 +13,7 @@ import org.apache.flink.streaming.api.functions.sink.filesystem.bucketassigners.
 import org.apache.flink.streaming.api.functions.sink.filesystem.rollingpolicies.DefaultRollingPolicy
 import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironment}
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer
+
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
